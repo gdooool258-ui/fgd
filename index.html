@@ -1,575 +1,630 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مفاجأة خاصة لـ خوله 💖</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for Arabic Typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@500;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #f48fb1 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            touch-action: manipulation;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ظرف مفاجأة لخوله 💖</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,700;1,400&family=Cairo:wght@400;600;700;800&family=Reem+Kufi:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
 
-        .font-arabic-title {
-            font-family: 'Reem Kufi', sans-serif;
-        }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffe6eb 0%, #ffd1dc 40%, #fbc4ab 100%);
+      font-family: 'Cairo', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
 
-        /* Envelope Styling & Animations */
-        .envelope-wrapper {
-            perspective: 1000px;
-            cursor: pointer;
-        }
+    /* Ambient Background Glow */
+    .bg-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 182, 193, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+    }
 
-        .envelope {
-            position: relative;
-            width: 280px;
-            height: 180px;
-            background-color: #f06292;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            box-shadow: 0 15px 35px rgba(233, 30, 99, 0.3);
-            transition: transform 0.5s ease;
-        }
+    /* Music Floating Button */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: 30px;
+      box-shadow: 0 10px 25px rgba(220, 53, 69, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.3s ease;
+    }
 
-        @media (min-width: 640px) {
-            .envelope {
-                width: 360px;
-                height: 230px;
-            }
-        }
+    .music-btn {
+      background: #ff4d6d;
+      color: white;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.4);
+      transition: transform 0.2s, background 0.2s;
+    }
 
-        .envelope:hover {
-            transform: translateY(-5px) scale(1.02);
-        }
+    .music-btn:hover {
+      transform: scale(1.08);
+      background: #ff2a55;
+    }
 
-        .envelope::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 140px solid transparent;
-            border-right: 140px solid transparent;
-            border-bottom: 110px solid #ec407a;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            z-index: 3;
-        }
+    .volume-slider {
+      width: 70px;
+      accent-color: #ff4d6d;
+      cursor: pointer;
+    }
 
-        @media (min-width: 640px) {
-            .envelope::before {
-                border-left-width: 180px;
-                border-right-width: 180px;
-                border-bottom-width: 140px;
-            }
-        }
+    /* Scene Container */
+    .container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+    }
 
-        .envelope-flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 140px solid transparent;
-            border-right: 140px solid transparent;
-            border-top: 100px solid #d81b60;
-            transform-origin: top;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 4;
-        }
+    /* Stage 1: Envelope Wrapper */
+    .envelope-wrapper {
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
 
-        @media (min-width: 640px) {
-            .envelope-flap {
-                border-left-width: 180px;
-                border-right-width: 180px;
-                border-top-width: 130px;
-            }
-        }
+    .envelope-wrapper:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
 
-        .envelope.open .envelope-flap {
-            transform: rotateX(180deg);
-            z-index: 1;
-        }
+    .envelope {
+      width: 290px;
+      height: 190px;
+      background-color: #ff758f;
+      position: relative;
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 20px 40px rgba(186, 24, 27, 0.25);
+    }
 
-        .letter {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
-            height: 85%;
-            background: #ffffff;
-            border-radius: 8px;
-            transition: transform 0.6s ease 0.3s;
-            z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+    /* Flap Top */
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-left: 145px solid transparent;
+      border-right: 145px solid transparent;
+      border-top: 110px solid #ff4d6d;
+      transform-origin: top;
+      transition: transform 0.6s ease 0.2s, z-index 0.2s ease 0.4s;
+      z-index: 4;
+    }
 
-        .envelope.open .letter {
-            transform: translateY(-80px);
-        }
+    .envelope.open::before {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
 
-        @media (min-width: 640px) {
-            .envelope.open .letter {
-                transform: translateY(-100px);
-            }
-        }
+    /* Left & Right Pocket Folds */
+    .envelope::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 145px solid #ff597b;
+      border-right: 145px solid #ff597b;
+      border-bottom: 95px solid transparent;
+      border-top: 95px solid transparent;
+      border-radius: 0 0 15px 15px;
+      z-index: 3;
+    }
 
-        /* Heart Seal */
-        .heart-seal {
-            position: absolute;
-            top: 60px;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 45px;
-            height: 45px;
-            background-color: #c2185b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: opacity 0.3s ease;
-        }
+    /* Inner Card inside Envelope */
+    .card-inside {
+      position: absolute;
+      bottom: 10px;
+      left: 5%;
+      width: 90%;
+      height: 160px;
+      background: #fff;
+      border-radius: 10px;
+      z-index: 2;
+      transition: transform 0.6s ease 0.5s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      padding: 15px;
+      text-align: center;
+    }
 
-        @media (min-width: 640px) {
-            .heart-seal {
-                top: 80px;
-                width: 55px;
-                height: 55px;
-            }
-        }
+    .envelope.open .card-inside {
+      transform: translateY(-90px);
+    }
 
-        .envelope.open .heart-seal {
-            opacity: 0;
-            pointer-events: none;
-        }
+    /* Wax Seal Button */
+    .wax-seal {
+      position: absolute;
+      top: 95px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55px;
+      height: 55px;
+      background: radial-gradient(circle, #d90429, #8d0801);
+      border-radius: 50%;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 22px;
+      box-shadow: 0 6px 15px rgba(141, 8, 1, 0.4);
+      border: 2px solid #ffb5a7;
+      transition: opacity 0.4s ease, transform 0.3s ease;
+    }
 
-        /* Falling Hearts Canvas Container */
-        #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 50;
-        }
+    .envelope.open .wax-seal {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-        /* Glowing text effect */
-        .glow-text {
-            text-shadow: 0 0 15px rgba(233, 30, 99, 0.6),
-                         0 0 30px rgba(255, 105, 180, 0.4),
-                         0 0 45px rgba(255, 182, 193, 0.3);
-        }
+    .tap-hint {
+      margin-top: 35px;
+      color: #c9184a;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      animation: pulseText 1.5s infinite alternate;
+    }
 
-        /* Pulsing Heart Icon Animation */
-        @keyframes pulse-heart {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-        }
-        .pulse {
-            animation: pulse-heart 1.5s infinite ease-in-out;
-        }
+    @keyframes pulseText {
+      0% { opacity: 0.6; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1.03); }
+    }
 
-        /* Shake animation for wrong password */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
-        .shake-modal {
-            animation: shake 0.4s ease-in-out;
-        }
-    </style>
+    /* Modal Password Stage */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 35px 30px;
+      border-radius: 25px;
+      box-shadow: 0 25px 50px rgba(255, 77, 109, 0.25);
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      transform: scale(0.8);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 2px solid #ffccd5;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-card h3 {
+      color: #a4133c;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .modal-card p {
+      color: #555;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 14px 20px;
+      border: 2px solid #ffb5a7;
+      border-radius: 50px;
+      outline: none;
+      font-size: 1.1rem;
+      text-align: center;
+      font-family: 'Cairo', sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background: #fff5f6;
+    }
+
+    .password-input:focus {
+      border-color: #ff4d6d;
+      box-shadow: 0 0 12px rgba(255, 77, 109, 0.3);
+      background: #fff;
+    }
+
+    .error-msg {
+      color: #d90429;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: -12px;
+      margin-bottom: 12px;
+      min-height: 20px;
+      display: none;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(45deg, #ff4d6d, #ff758f);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(255, 77, 109, 0.5);
+    }
+
+    /* Stage 3: Final Name Display */
+    .reveal-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      animation: zoomIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      z-index: 20;
+    }
+
+    @keyframes zoomIn {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .name-title {
+      font-family: 'Amiri', serif;
+      font-size: 5rem;
+      font-weight: 700;
+      color: #800f2f;
+      text-shadow: 
+        0 0 20px rgba(255, 182, 193, 0.8),
+        2px 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .sub-title {
+      font-size: 1.5rem;
+      color: #c9184a;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 8px 25px;
+      border-radius: 30px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 15px rgba(201, 24, 74, 0.1);
+    }
+
+    /* Falling Hearts Canvas */
+    #heartsCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 480px) {
+      .envelope {
+        width: 250px;
+        height: 165px;
+      }
+      .envelope::before {
+        border-left-width: 125px;
+        border-right-width: 125px;
+        border-top-width: 95px;
+      }
+      .envelope::after {
+        border-left-width: 125px;
+        border-right-width: 125px;
+        border-bottom-width: 82px;
+        border-top-width: 82px;
+      }
+      .name-title {
+        font-size: 3.8rem;
+      }
+      .sub-title {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 relative">
+<body>
 
-    <!-- Canvas for Floating/Falling Hearts -->
-    <div id="canvas-container">
-        <canvas id="heartsCanvas"></canvas>
+  <!-- Ambient Glow -->
+  <div class="bg-glow"></div>
+
+  <!-- Music Control (Visitor can Mute/Play, Source is hidden in Code) -->
+  <div class="music-control">
+    <button class="music-btn" id="musicToggleBtn" title="تشغيل / إيقاف الموسيقى">🎵</button>
+    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.05" value="0.6">
+  </div>
+
+  <!-- Audio Element (تستطيع تغيير رابط الموسيقى من هنا في الكود فقط) -->
+  <audio id="bgMusic" loop src="https://c.top4top.io/m_394144uqm1.mp3"></audio>
+
+  <!-- Hearts Canvas -->
+  <canvas id="heartsCanvas"></canvas>
+
+  <!-- Main Interactive Area -->
+  <div class="container">
+    
+    <!-- STAGE 1: Envelope -->
+    <div class="envelope-wrapper" id="envelopeWrapper">
+      <div class="envelope" id="envelope">
+        <div class="wax-seal">💌</div>
+        <div class="card-inside">
+          <p style="color: #ff4d6d; font-weight: bold; font-size: 1.1rem;">رسالة خاصة جداً ❤️</p>
+        </div>
+      </div>
+      <div class="tap-hint">اضغط على الظرف لفتحه 💖</div>
     </div>
 
-    <!-- AUDIO ELEMENT FOR BACKGROUND MUSIC -->
-    <!-- يمكنك تغيير رابط الموسيقى المباشر هنا في src أو من لوحة التحكم بالموقع -->
-    <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112187.mp3"></audio>
+    <!-- STAGE 3: Final Name Display -->
+    <div class="reveal-container" id="revealContainer">
+      <h1 class="name-title">خوله داده</h1>
+      <div class="sub-title">✨ أنتِ أجمل ما في العالم ✨</div>
+    </div>
 
-    <!-- MUSIC CONTROLLER FLOATING WIDGET -->
-    <div class="fixed top-4 right-4 z-50 flex items-center gap-2 bg-white/80 backdrop-blur-md p-2 px-3 rounded-full shadow-lg border border-pink-200 text-pink-700 text-xs sm:text-sm">
-        <!-- Play / Pause Button -->
-        <button id="musicToggleBtn" onclick="toggleMusic()" class="p-2 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition shadow">
-            <svg id="playIcon" class="w-4 h-4 fill-current hidden" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-            </svg>
-            <svg id="pauseIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-            </svg>
-        </button>
+  </div>
+
+  <!-- STAGE 2: Password Modal Overlay -->
+  <div class="modal-overlay" id="passwordModal">
+    <div class="modal-card">
+      <h3>الرسالة محمية بكلمة سر 🔒</h3>
+      <p>يرجى إدخال كلمة السر لفتح الرسالة</p>
+      <div class="input-group">
+        <input type="password" id="passwordInput" class="password-input" placeholder="أدخل كلمة السر هنا..." autocomplete="off">
+      </div>
+      <div class="error-msg" id="errorMsg">كلمة السر غير صحيحة، حاول مجدداً ❤️</div>
+      <button class="submit-btn" id="submitPassBtn">فتح الرسالة ✨</button>
+    </div>
+  </div>
+
+  <script>
+    // Audio Player Elements
+    const bgMusic = document.getElementById('bgMusic');
+    const musicToggleBtn = document.getElementById('musicToggleBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    let isPlaying = false;
+
+    // Toggle Play/Pause Music
+    function toggleAudio() {
+      if (isPlaying) {
+        bgMusic.pause();
+        musicToggleBtn.textContent = '🔇';
+        isPlaying = false;
+      } else {
+        bgMusic.play().then(() => {
+          musicToggleBtn.textContent = '🎵';
+          isPlaying = true;
+        }).catch(err => {
+          console.log("Autoplay restriction:", err);
+        });
+      }
+    }
+
+    musicToggleBtn.addEventListener('click', toggleAudio);
+
+    // Volume Control
+    volumeSlider.addEventListener('input', (e) => {
+      bgMusic.volume = e.target.value;
+    });
+
+    // Try starting music on first touch/click anywhere
+    document.body.addEventListener('click', function startAudioOnFirstUserInteraction() {
+      if (!isPlaying && bgMusic.src) {
+        bgMusic.volume = volumeSlider.value;
+        bgMusic.play().then(() => {
+          isPlaying = true;
+          musicToggleBtn.textContent = '🎵';
+        }).catch(() => {});
+      }
+    }, { once: true });
+
+    // Interactive Logic
+    const envelopeWrapper = document.getElementById('envelopeWrapper');
+    const envelope = document.getElementById('envelope');
+    const passwordModal = document.getElementById('passwordModal');
+    const passwordInput = document.getElementById('passwordInput');
+    const submitPassBtn = document.getElementById('submitPassBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const revealContainer = document.getElementById('revealContainer');
+
+    // Envelope Click -> Open Envelope & Show Modal
+    envelopeWrapper.addEventListener('click', () => {
+      envelope.classList.add('open');
+      setTimeout(() => {
+        passwordModal.classList.add('active');
+        passwordInput.focus();
+      }, 900);
+    });
+
+    // Submit Password Action
+    function checkPassword() {
+      const val = passwordInput.value.trim();
+      if (val === 'خوله' || val === 'خولة') {
+        // Success
+        passwordModal.classList.remove('active');
+        envelopeWrapper.style.display = 'none';
+        revealContainer.style.display = 'flex';
         
-        <!-- Volume Slider -->
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)" class="w-16 sm:w-20 accent-pink-500 cursor-pointer" title="التحكم بالصوت">
+        // Start Hearts Animation
+        startHearts();
+      } else {
+        // Error Shake Effect
+        errorMsg.style.display = 'block';
+        passwordInput.style.borderColor = '#d90429';
+        passwordInput.classList.add('shake');
+        setTimeout(() => {
+          passwordInput.classList.remove('shake');
+        }, 500);
+      }
+    }
 
-        <!-- Music Settings Modal Trigger -->
-        <button onclick="toggleMusicModal()" class="p-1.5 hover:bg-pink-100 rounded-full transition text-pink-600" title="تغيير رابط الموسيقى">
-            ⚙️
-        </button>
-    </div>
+    submitPassBtn.addEventListener('click', checkPassword);
 
-    <!-- MUSIC URL CHANGE MODAL (Hidden by default) -->
-    <div id="musicModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-pink-200">
-            <h4 class="font-bold text-gray-800 text-lg mb-2">تعديل رابط الموسيقى 🎶</h4>
-            <p class="text-xs text-gray-500 mb-4">ضع رابط ملف صوتی مباشر (MP3) للتشغيل بالخلفية:</p>
-            <input type="text" id="musicUrlInput" placeholder="https://c.top4top.io/m_394144uqm1.mp3" class="w-full px-3 py-2 border border-pink-300 rounded-lg text-xs mb-4 focus:outline-none focus:border-pink-500 dir-ltr text-left">
-            <div class="flex justify-end gap-2">
-                <button onclick="toggleMusicModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold rounded-lg transition">إلغاء</button>
-                <button onclick="updateMusicSource()" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold rounded-lg transition">حفظ وتطبيق</button>
-            </div>
-        </div>
-    </div>
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        checkPassword();
+      }
+    });
 
-    <!-- MAIN CONTAINER -->
-    <div class="w-full max-w-lg flex flex-col items-center justify-center z-10 text-center">
+    passwordInput.addEventListener('input', () => {
+      errorMsg.style.display = 'none';
+      passwordInput.style.borderColor = '#ffb5a7';
+    });
 
-        <!-- STEP 1: ENVELOPE SECTION -->
-        <div id="envelope-section" class="flex flex-col items-center justify-center transition-all duration-700">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-800 mb-8 font-arabic-title animate-bounce">
-                لديك رسالة خاصة! انقر على الظرف لفتحه ✨
-            </h2>
-            
-            <div class="envelope-wrapper" onclick="openEnvelope()">
-                <div class="envelope" id="envelope">
-                    <div class="envelope-flap"></div>
-                    <div class="heart-seal">
-                        <svg class="w-6 h-6 text-white fill-current pulse" viewBox="0 0 24 24">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                        </svg>
-                    </div>
-                    <div class="letter flex items-center justify-center p-4">
-                        <p class="text-pink-600 font-bold text-sm md:text-base">سر خطير داخل الرسالة 🔒</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    // Falling Hearts System
+    const canvas = document.getElementById('heartsCanvas');
+    const ctx = canvas.getContext('2d');
+    let hearts = [];
+    let animationFrameId;
 
-        <!-- STEP 2: PASSWORD MODAL (Hidden by default) -->
-        <div id="password-section" class="hidden opacity-0 transform scale-90 transition-all duration-500 bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-pink-200 w-full max-w-md">
-            <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-            </div>
-            
-            <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-2">أدخل كلمة المرور</h3>
-            <p class="text-sm text-gray-600 mb-6">الرسالة محمية بكلمة سر، يرجى كتابتها للمتابعة</p>
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-            <form onsubmit="checkPassword(event)" class="space-y-4">
-                <div class="relative">
-                    <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور هنا..." 
-                        class="w-full px-4 py-3 text-center border-2 border-pink-300 rounded-xl focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition text-lg">
-                </div>
+    class Heart {
+      constructor() {
+        this.reset(true);
+      }
 
-                <!-- Custom Alert Box -->
-                <div id="error-message" class="hidden text-red-500 text-sm font-semibold bg-red-50 p-2.5 rounded-lg border border-red-200 transition-all">
-                    ⚠️ كلمة السر غير صحيحة، حاول مجدداً!
-                </div>
+      reset(firstRun = false) {
+        this.x = Math.random() * canvas.width;
+        this.y = firstRun ? Math.random() * canvas.height : -20;
+        this.size = Math.random() * 18 + 10; // size 10 to 28
+        this.speedY = Math.random() * 1.5 + 1;
+        this.speedX = Math.sin(Math.random() * Math.PI) * 0.8;
+        this.opacity = Math.random() * 0.6 + 0.4;
+        this.color = ['#ff4d6d', '#ff758f', '#ffb3c1', '#c9184a', '#ff8fa3'][Math.floor(Math.random() * 5)];
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = (Math.random() - 0.5) * 2;
+      }
 
-                <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg transform active:scale-95 transition duration-200">
-                    افتح المفاجأة ✨
-                </button>
-            </form>
-        </div>
+      update() {
+        this.y += this.speedY;
+        this.x += Math.sin(this.y * 0.01) * 0.8;
+        this.rotation += this.rotationSpeed;
 
-        <!-- STEP 3: REVEAL KHOWLA SURPRISE (Hidden by default) -->
-        <div id="reveal-section" class="hidden opacity-0 transform scale-90 transition-all duration-1000 flex flex-col items-center justify-center w-full">
-            
-            <!-- Glowing Card Container -->
-            <div class="bg-white/40 backdrop-blur-lg p-8 md:p-12 rounded-3xl border-4 border-pink-300/50 shadow-2xl flex flex-col items-center justify-center w-full relative overflow-hidden">
-                
-                <!-- Ambient background glow -->
-                <div class="absolute -top-10 -left-10 w-40 h-40 bg-pink-400 rounded-full blur-3xl opacity-40"></div>
-                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-rose-400 rounded-full blur-3xl opacity-40"></div>
-
-                <!-- Main Heart Icon -->
-                <div class="mb-4 text-pink-600 animate-bounce">
-                    <svg class="w-16 h-16 md:w-20 md:h-20 fill-current drop-shadow-lg" viewBox="0 0 24 24">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                </div>
-
-                <p class="text-pink-700 text-lg md:text-xl font-medium mb-2">أهلاً وسهلاً بكِ</p>
-                
-                <!-- Beautiful Name Reveal -->
-                <h1 class="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 font-arabic-title glow-text mb-6 py-2 tracking-wide">
-                    خوله
-                </h1>
-
-                <p class="text-gray-700 text-base md:text-lg max-w-xs md:max-w-md leading-relaxed font-semibold">
-                    أنتِ الجمال والروعة وكل الأشياء اللطيفة في هذا العالم! ✨🌸
-                </p>
-
-                <!-- Replay Button -->
-                <button onclick="resetApp()" class="mt-8 text-xs text-pink-600 hover:text-pink-800 underline transition">
-                    إعادة العرض 🔄
-                </button>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // DOM Elements
-        const envelopeSection = document.getElementById('envelope-section');
-        const envelope = document.getElementById('envelope');
-        const passwordSection = document.getElementById('password-section');
-        const passwordInput = document.getElementById('passwordInput');
-        const errorMessage = document.getElementById('error-message');
-        const revealSection = document.getElementById('reveal-section');
-
-        // Audio Elements
-        const bgMusic = document.getElementById('bgMusic');
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
-        const musicModal = document.getElementById('musicModal');
-        const musicUrlInput = document.getElementById('musicUrlInput');
-
-        let isEnvelopeOpen = false;
-
-        // Auto-play audio on first interaction (Browsers require interaction)
-        function startAudio() {
-            bgMusic.volume = 0.5;
-            bgMusic.play().then(() => {
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
-            }).catch(e => {
-                console.log("Auto-play prevented until interaction");
-            });
+        if (this.y > canvas.height + 30) {
+          this.reset(false);
         }
+      }
 
-        // Toggle Music Play/Pause
-        function toggleMusic() {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
-            } else {
-                bgMusic.pause();
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
-            }
-        }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        
+        // Draw Heart Shape
+        ctx.beginPath();
+        const topCurveHeight = this.size * 0.3;
+        ctx.moveTo(0, topCurveHeight);
+        ctx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
+        ctx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size);
+        ctx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
+        ctx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+      }
+    }
 
-        // Change Volume
-        function changeVolume(val) {
-            bgMusic.volume = val;
-        }
+    function startHearts() {
+      hearts = [];
+      const heartCount = window.innerWidth < 500 ? 35 : 60;
+      for (let i = 0; i < heartCount; i++) {
+        hearts.push(new Heart());
+      }
+      animateHearts();
+    }
 
-        // Open/Close Music Settings Modal
-        function toggleMusicModal() {
-            musicModal.classList.toggle('hidden');
-            if (!musicModal.classList.contains('hidden')) {
-                musicUrlInput.value = bgMusic.src;
-            }
-        }
-
-        // Update Music Source URL
-        function updateMusicSource() {
-            const newUrl = musicUrlInput.value.trim();
-            if (newUrl) {
-                bgMusic.src = newUrl;
-                bgMusic.play().then(() => {
-                    playIcon.classList.add('hidden');
-                    pauseIcon.classList.remove('hidden');
-                }).catch(err => alert("عذراً، لم نتمكن من تشغيل هذا الرابط الصوتي."));
-            }
-            toggleMusicModal();
-        }
-
-        // Step 1: Open Envelope
-        function openEnvelope() {
-            if (isEnvelopeOpen) return;
-            isEnvelopeOpen = true;
-
-            // Trigger music playback on user interaction
-            startAudio();
-
-            envelope.classList.add('open');
-
-            // Wait for envelope animation then show password modal
-            setTimeout(() => {
-                envelopeSection.classList.add('opacity-0', 'scale-90');
-                
-                setTimeout(() => {
-                    envelopeSection.classList.add('hidden');
-                    passwordSection.classList.remove('hidden');
-                    
-                    // Smooth Fade In Password Modal
-                    setTimeout(() => {
-                        passwordSection.classList.remove('opacity-0', 'scale-90');
-                        passwordInput.focus();
-                    }, 50);
-                }, 500);
-            }, 1000);
-        }
-
-        // Step 2: Check Password
-        function checkPassword(event) {
-            event.preventDefault();
-            const inputVal = passwordInput.value.trim();
-
-            if (inputVal === 'خوله') {
-                // Correct Password
-                errorMessage.classList.add('hidden');
-                
-                // Hide Password Modal
-                passwordSection.classList.add('opacity-0', 'scale-90');
-                
-                setTimeout(() => {
-                    passwordSection.classList.add('hidden');
-                    revealSection.classList.remove('hidden');
-                    
-                    // Smooth Fade In Reveal Section
-                    setTimeout(() => {
-                        revealSection.classList.remove('opacity-0', 'scale-90');
-                        startHeartsAnimation(); // Start falling hearts!
-                    }, 50);
-                }, 500);
-
-            } else {
-                // Wrong Password
-                errorMessage.classList.remove('hidden');
-                passwordSection.classList.add('shake-modal');
-                
-                setTimeout(() => {
-                    passwordSection.classList.remove('shake-modal');
-                }, 400);
-            }
-        }
-
-        // Step 3: Falling Hearts Animation (Canvas-based for optimal performance)
-        const canvas = document.getElementById('heartsCanvas');
-        const ctx = canvas.getContext('2d');
-        let animationFrameId;
-        let hearts = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Heart {
-            constructor() {
-                this.reset();
-            }
-
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = -20 - Math.random() * 100;
-                this.size = Math.random() * 18 + 12; // Heart size
-                this.speed = Math.random() * 2 + 1.5; // Falling speed
-                this.opacity = Math.random() * 0.7 + 0.3;
-                this.rotation = Math.random() * Math.PI * 2;
-                this.rotationSpeed = (Math.random() - 0.5) * 0.03;
-                this.color = this.getRandomColor();
-                this.swing = Math.random() * 2; // Horizontal sway
-                this.swingAngle = Math.random() * Math.PI * 2;
-            }
-
-            getRandomColor() {
-                const colors = [
-                    '#e91e63', '#ec407a', '#f48fb1', 
-                    '#ff4081', '#ff80ab', '#d81b60', '#c2185b'
-                ];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            update() {
-                this.y += this.speed;
-                this.swingAngle += 0.02;
-                this.x += Math.sin(this.swingAngle) * this.swing;
-                this.rotation += this.rotationSpeed;
-
-                if (this.y > canvas.height + 30) {
-                    this.reset();
-                }
-            }
-
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-                ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = this.color;
-
-                // Draw Heart Path
-                ctx.beginPath();
-                const topCurveHeight = this.size * 0.3;
-                ctx.moveTo(0, topCurveHeight);
-                ctx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
-                ctx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size);
-                ctx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
-                ctx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.restore();
-            }
-        }
-
-        function startHeartsAnimation() {
-            // Create 50 heart particles
-            hearts = [];
-            for (let i = 0; i < 50; i++) {
-                hearts.push(new Heart());
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                hearts.forEach(heart => {
-                    heart.update();
-                    heart.draw();
-                });
-                animationFrameId = requestAnimationFrame(animate);
-            }
-
-            animate();
-        }
-
-        // Reset application to initial state
-        function resetApp() {
-            cancelAnimationFrame(animationFrameId);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            isEnvelopeOpen = false;
-            passwordInput.value = '';
-            errorMessage.classList.add('hidden');
-
-            revealSection.classList.add('opacity-0', 'scale-90');
-            setTimeout(() => {
-                revealSection.classList.add('hidden');
-                envelope.classList.remove('open');
-                envelopeSection.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    envelopeSection.classList.remove('opacity-0', 'scale-90');
-                }, 50);
-            }, 500);
-        }
-    </script>
+    function animateHearts() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hearts.forEach(heart => {
+        heart.update();
+        heart.draw();
+      });
+      animationFrameId = requestAnimationFrame(animateHearts);
+    }
+  </script>
 </body>
 </html>
