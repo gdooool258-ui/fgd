@@ -201,6 +201,44 @@
         <canvas id="heartsCanvas"></canvas>
     </div>
 
+    <!-- AUDIO ELEMENT FOR BACKGROUND MUSIC -->
+    <!-- يمكنك تغيير رابط الموسيقى المباشر هنا في src أو من لوحة التحكم بالموقع -->
+    <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112187.mp3"></audio>
+
+    <!-- MUSIC CONTROLLER FLOATING WIDGET -->
+    <div class="fixed top-4 right-4 z-50 flex items-center gap-2 bg-white/80 backdrop-blur-md p-2 px-3 rounded-full shadow-lg border border-pink-200 text-pink-700 text-xs sm:text-sm">
+        <!-- Play / Pause Button -->
+        <button id="musicToggleBtn" onclick="toggleMusic()" class="p-2 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition shadow">
+            <svg id="playIcon" class="w-4 h-4 fill-current hidden" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="pauseIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+        </button>
+        
+        <!-- Volume Slider -->
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)" class="w-16 sm:w-20 accent-pink-500 cursor-pointer" title="التحكم بالصوت">
+
+        <!-- Music Settings Modal Trigger -->
+        <button onclick="toggleMusicModal()" class="p-1.5 hover:bg-pink-100 rounded-full transition text-pink-600" title="تغيير رابط الموسيقى">
+            ⚙️
+        </button>
+    </div>
+
+    <!-- MUSIC URL CHANGE MODAL (Hidden by default) -->
+    <div id="musicModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-pink-200">
+            <h4 class="font-bold text-gray-800 text-lg mb-2">تعديل رابط الموسيقى 🎶</h4>
+            <p class="text-xs text-gray-500 mb-4">ضع رابط ملف صوتی مباشر (MP3) للتشغيل بالخلفية:</p>
+            <input type="text" id="musicUrlInput" placeholder="https://c.top4top.io/m_394144uqm1.mp3" class="w-full px-3 py-2 border border-pink-300 rounded-lg text-xs mb-4 focus:outline-none focus:border-pink-500 dir-ltr text-left">
+            <div class="flex justify-end gap-2">
+                <button onclick="toggleMusicModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold rounded-lg transition">إلغاء</button>
+                <button onclick="updateMusicSource()" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold rounded-lg transition">حفظ وتطبيق</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN CONTAINER -->
     <div class="w-full max-w-lg flex flex-col items-center justify-center z-10 text-center">
 
@@ -300,12 +338,72 @@
         const errorMessage = document.getElementById('error-message');
         const revealSection = document.getElementById('reveal-section');
 
+        // Audio Elements
+        const bgMusic = document.getElementById('bgMusic');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const musicModal = document.getElementById('musicModal');
+        const musicUrlInput = document.getElementById('musicUrlInput');
+
         let isEnvelopeOpen = false;
+
+        // Auto-play audio on first interaction (Browsers require interaction)
+        function startAudio() {
+            bgMusic.volume = 0.5;
+            bgMusic.play().then(() => {
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            }).catch(e => {
+                console.log("Auto-play prevented until interaction");
+            });
+        }
+
+        // Toggle Music Play/Pause
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            } else {
+                bgMusic.pause();
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+            }
+        }
+
+        // Change Volume
+        function changeVolume(val) {
+            bgMusic.volume = val;
+        }
+
+        // Open/Close Music Settings Modal
+        function toggleMusicModal() {
+            musicModal.classList.toggle('hidden');
+            if (!musicModal.classList.contains('hidden')) {
+                musicUrlInput.value = bgMusic.src;
+            }
+        }
+
+        // Update Music Source URL
+        function updateMusicSource() {
+            const newUrl = musicUrlInput.value.trim();
+            if (newUrl) {
+                bgMusic.src = newUrl;
+                bgMusic.play().then(() => {
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                }).catch(err => alert("عذراً، لم نتمكن من تشغيل هذا الرابط الصوتي."));
+            }
+            toggleMusicModal();
+        }
 
         // Step 1: Open Envelope
         function openEnvelope() {
             if (isEnvelopeOpen) return;
             isEnvelopeOpen = true;
+
+            // Trigger music playback on user interaction
+            startAudio();
 
             envelope.classList.add('open');
 
@@ -331,7 +429,7 @@
             event.preventDefault();
             const inputVal = passwordInput.value.trim();
 
-            if (inputVal === 'محمود') {
+            if (inputVal === 'خوله') {
                 // Correct Password
                 errorMessage.classList.add('hidden');
                 
