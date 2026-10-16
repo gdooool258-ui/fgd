@@ -3,256 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة زرار محمود الهارب</title>
+    <title>مفاجأة خاصة لـ خوله 💖</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Arabic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@500;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            user-select: none;
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #f48fb1 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
         }
 
-        #ui-panel {
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            text-align: center;
-            z-index: 10;
+        .font-arabic-title {
+            font-family: 'Reem Kufi', sans-serif;
         }
 
-        h1 { margin: 0 0 10px 0; font-size: 24px; color: #f1c40f; }
-        .stats { font-size: 18px; margin: 5px 0; }
-
-        /* التحكم في الصوت */
-        .volume-control {
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-        .volume-control input {
-            cursor: pointer;
-            accent-color: #2ecc71;
-        }
-
-        #start-btn {
-            padding: 12px 25px;
-            font-size: 18px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background 0.2s;
-            margin-top: 5px;
-        }
-        #start-btn:hover { background-color: #27ae60; }
-
-        /* الزرار المستهدف */
-        #game-btn {
-            position: absolute;
-            display: none;
-            padding: 10px 20px;
-            background-color: #e74c3c;
-            color: white;
-            border: 2px solid white;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: all 0.1s ease;
-            z-index: 5;
-        }
-
-        /* رسائل الفوز والخسارة */
-        #overlay-message {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-        }
-
-        #overlay-message h2 { font-size: 40px; margin-bottom: 20px; }
-        #overlay-message button {
-            padding: 10px 25px;
-            font-size: 18px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        /* Envelope Styling & Animations */
+        .envelope-wrapper {
+            perspective: 1000px;
             cursor: pointer;
         }
-    </style>
-</head>
-<body>
 
-    <!-- لوحة التحكم العلوية -->
-    <div id="ui-panel">
-        <h1>لعبة زرار محمود الهارب 🏃‍♂️</h1>
-        <div class="stats">المرحلة: <span id="level-display">1</span> / 50</div>
-        <div class="stats">الوقت المتبقي: <span id="timer-display">30</span> ثانية</div>
-        
-        <!-- خيار التحكم في الصوت -->
-        <div class="volume-control">
-            <label for="volume-slider">🎵 صوت الموسيقى:</label>
-            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.3" oninput="changeVolume(this.value)">
-        </div>
-
-        <button id="start-btn" onclick="startGame()">إبدأ اللعبة 🎮</button>
-    </div>
-
-    <!-- زر اللعب (زرار محمود) -->
-    <button id="game-btn" onclick="winLevel()">إضغطني!</button>
-
-    <!-- شاشة الرسائل (فوز / خسارة) -->
-    <div id="overlay-message">
-        <h2 id="msg-text"></h2>
-        <button id="msg-btn">متابعة</button>
-    </div>
-
-    <!-- الموسيقى الخلفية -->
-    <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
-    <script>
-        let level = 1;
-        const maxLevels = 50;
-        let timeLeft = 30;
-        let timerInterval;
-        let moveInterval;
-        
-        const gameBtn = document.getElementById('game-btn');
-        const startBtn = document.getElementById('start-btn');
-        const levelDisplay = document.getElementById('level-display');
-        const timerDisplay = document.getElementById('timer-display');
-        const overlay = document.getElementById('overlay-message');
-        const msgText = document.getElementById('msg-text');
-        const msgBtn = document.getElementById('msg-btn');
-        const bgMusic = document.getElementById('bg-music');
-        const volumeSlider = document.getElementById('volume-slider');
-
-        // ضبط الصوت المبدئي
-        bgMusic.volume = volumeSlider.value;
-
-        // دالة تغيير الصوت من الشريط
-        function changeVolume(val) {
-            bgMusic.volume = val;
+        .envelope {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            background-color: #f06292;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            box-shadow: 0 15px 35px rgba(233, 30, 99, 0.3);
+            transition: transform 0.5s ease;
         }
 
-        // بدء اللعبة
-        function startGame() {
-            startBtn.style.display = 'none';
-            gameBtn.style.display = 'block';
-            resetTimer();
-            setupLevel();
-            
-            // تشغيل الموسيقى بالصوت المحدد
-            bgMusic.play().catch(e => console.log("المتصفح يتطلب تفاعل لتشغيل الصوت"));
-        }
-
-        // إعدادات المرحلة
-        function setupLevel() {
-            clearInterval(moveInterval);
-            
-            // الصعوبة تزيد مع المراحل (السرعة تزيد والحجم يصغر)
-            let speed = Math.max(200, 1100 - (level * 18)); 
-            let scale = Math.max(0.6, 1.2 - (level * 0.012)); 
-            
-            gameBtn.style.transform = `scale(${scale})`;
-            moveButton();
-            moveInterval = setInterval(moveButton, speed);
-        }
-
-        // تحريك الزرار عشوائياً
-        function moveButton() {
-            const maxX = window.innerWidth - gameBtn.offsetWidth - 40;
-            const maxY = window.innerHeight - gameBtn.offsetHeight - 160; // زيادة الهامش بسبب شريط الصوت
-            
-            const randomX = Math.max(20, Math.floor(Math.random() * maxX));
-            const randomY = Math.max(180, Math.floor(Math.random() * maxY));
-            
-            gameBtn.style.left = randomX + 'px';
-            gameBtn.style.top = randomY + 'px';
-        }
-
-        // مؤقت الـ 30 ثانية
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timeLeft = 30;
-            timerDisplay.innerText = timeLeft;
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                timerDisplay.innerText = timeLeft;
-                
-                if (timeLeft <= 0) {
-                    gameOver();
-                }
-            }, 1000);
-        }
-
-        // الفوز بالمرحلة
-        function winLevel() {
-            clearInterval(moveInterval);
-            clearInterval(timerInterval);
-            gameBtn.style.display = 'none';
-
-            if (level >= maxLevels) {
-                showOverlay("🎉 مبروك! لقد تختمت الـ 50 مرحلة وهزمت زرار محمود! 🎉", "إعادة اللعب من جديد", true);
-            } else {
-                showOverlay(`مبروك كسبت المرحلة ${level}! 👋`, "الانتقال للمرحلة التالية", false);
+        @media (min-width: 640px) {
+            .envelope {
+                width: 360px;
+                height: 230px;
             }
         }
 
-        // الخسارة
-        function gameOver() {
-            clearInterval(moveInterval);
-            clearInterval(timerInterval);
-            gameBtn.style.display = 'none';
-            
-            showOverlay("حاول مره اخري ياغبي 🤭", "إعادة المحاولة", true);
+        .envelope:hover {
+            transform: translateY(-5px) scale(1.02);
         }
 
-        // إظهار الرسائل المنبثقة
-        function showOverlay(text, buttonText, isReset) {
-            msgText.innerText = text;
-            msgBtn.innerText = buttonText;
-            overlay.style.display = 'flex';
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-bottom: 110px solid #ec407a;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 3;
+        }
+
+        @media (min-width: 640px) {
+            .envelope::before {
+                border-left-width: 180px;
+                border-right-width: 180px;
+                border-bottom-width: 140px;
+            }
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-top: 100px solid #d81b60;
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 4;
+        }
+
+        @media (min-width: 640px) {
+            .envelope-flap {
+                border-left-width: 180px;
+                border-right-width: 180px;
+                border-top-width: 130px;
+            }
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .letter {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            height: 85%;
+            background: #ffffff;
+            border-radius: 8px;
+            transition: transform 0.6s ease 0.3s;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .envelope.open .letter {
+            transform: translateY(-80px);
+        }
+
+        @media (min-width: 640px) {
+            .envelope.open .letter {
+                transform: translateY(-100px);
+            }
+        }
+
+        /* Heart Seal */
+        .heart-seal {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 45px;
+            height: 45px;
+            background-color: #c2185b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: opacity 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+            .heart-seal {
+                top: 80px;
+                width: 55px;
+                height: 55px;
+            }
+        }
+
+        .envelope.open .heart-seal {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Falling Hearts Canvas Container */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Glowing text effect */
+        .glow-text {
+            text-shadow: 0 0 15px rgba(233, 30, 99, 0.6),
+                         0 0 30px rgba(255, 105, 180, 0.4),
+                         0 0 45px rgba(255, 182, 193, 0.3);
+        }
+
+        /* Pulsing Heart Icon Animation */
+        @keyframes pulse-heart {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .pulse {
+            animation: pulse-heart 1.5s infinite ease-in-out;
+        }
+
+        /* Shake animation for wrong password */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        .shake-modal {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 relative">
+
+    <!-- Canvas for Floating/Falling Hearts -->
+    <div id="canvas-container">
+        <canvas id="heartsCanvas"></canvas>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="w-full max-w-lg flex flex-col items-center justify-center z-10 text-center">
+
+        <!-- STEP 1: ENVELOPE SECTION -->
+        <div id="envelope-section" class="flex flex-col items-center justify-center transition-all duration-700">
+            <h2 class="text-2xl md:text-3xl font-bold text-pink-800 mb-8 font-arabic-title animate-bounce">
+                لديك رسالة خاصة! انقر على الظرف لفتحه ✨
+            </h2>
             
-            msgBtn.onclick = function() {
-                overlay.style.display = 'none';
-                if (isReset) {
-                    level = 1;
-                    levelDisplay.innerText = level;
-                    startGame();
-                } else {
-                    level++;
-                    levelDisplay.innerText = level;
-                    gameBtn.style.display = 'block';
-                    resetTimer();
-                    setupLevel();
+            <div class="envelope-wrapper" onclick="openEnvelope()">
+                <div class="envelope" id="envelope">
+                    <div class="envelope-flap"></div>
+                    <div class="heart-seal">
+                        <svg class="w-6 h-6 text-white fill-current pulse" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
+                    <div class="letter flex items-center justify-center p-4">
+                        <p class="text-pink-600 font-bold text-sm md:text-base">سر خطير داخل الرسالة 🔒</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: PASSWORD MODAL (Hidden by default) -->
+        <div id="password-section" class="hidden opacity-0 transform scale-90 transition-all duration-500 bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-pink-200 w-full max-w-md">
+            <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </div>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-2">أدخل كلمة المرور</h3>
+            <p class="text-sm text-gray-600 mb-6">الرسالة محمية بكلمة سر، يرجى كتابتها للمتابعة</p>
+
+            <form onsubmit="checkPassword(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور هنا..." 
+                        class="w-full px-4 py-3 text-center border-2 border-pink-300 rounded-xl focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition text-lg">
+                </div>
+
+                <!-- Custom Alert Box -->
+                <div id="error-message" class="hidden text-red-500 text-sm font-semibold bg-red-50 p-2.5 rounded-lg border border-red-200 transition-all">
+                    ⚠️ كلمة السر غير صحيحة، حاول مجدداً!
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg transform active:scale-95 transition duration-200">
+                    افتح المفاجأة ✨
+                </button>
+            </form>
+        </div>
+
+        <!-- STEP 3: REVEAL KHOWLA SURPRISE (Hidden by default) -->
+        <div id="reveal-section" class="hidden opacity-0 transform scale-90 transition-all duration-1000 flex flex-col items-center justify-center w-full">
+            
+            <!-- Glowing Card Container -->
+            <div class="bg-white/40 backdrop-blur-lg p-8 md:p-12 rounded-3xl border-4 border-pink-300/50 shadow-2xl flex flex-col items-center justify-center w-full relative overflow-hidden">
+                
+                <!-- Ambient background glow -->
+                <div class="absolute -top-10 -left-10 w-40 h-40 bg-pink-400 rounded-full blur-3xl opacity-40"></div>
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-rose-400 rounded-full blur-3xl opacity-40"></div>
+
+                <!-- Main Heart Icon -->
+                <div class="mb-4 text-pink-600 animate-bounce">
+                    <svg class="w-16 h-16 md:w-20 md:h-20 fill-current drop-shadow-lg" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+
+                <p class="text-pink-700 text-lg md:text-xl font-medium mb-2">أهلاً وسهلاً بكِ</p>
+                
+                <!-- Beautiful Name Reveal -->
+                <h1 class="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 font-arabic-title glow-text mb-6 py-2 tracking-wide">
+                    خوله
+                </h1>
+
+                <p class="text-gray-700 text-base md:text-lg max-w-xs md:max-w-md leading-relaxed font-semibold">
+                    أنتِ الجمال والروعة وكل الأشياء اللطيفة في هذا العالم! ✨🌸
+                </p>
+
+                <!-- Replay Button -->
+                <button onclick="resetApp()" class="mt-8 text-xs text-pink-600 hover:text-pink-800 underline transition">
+                    إعادة العرض 🔄
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // DOM Elements
+        const envelopeSection = document.getElementById('envelope-section');
+        const envelope = document.getElementById('envelope');
+        const passwordSection = document.getElementById('password-section');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMessage = document.getElementById('error-message');
+        const revealSection = document.getElementById('reveal-section');
+
+        let isEnvelopeOpen = false;
+
+        // Step 1: Open Envelope
+        function openEnvelope() {
+            if (isEnvelopeOpen) return;
+            isEnvelopeOpen = true;
+
+            envelope.classList.add('open');
+
+            // Wait for envelope animation then show password modal
+            setTimeout(() => {
+                envelopeSection.classList.add('opacity-0', 'scale-90');
+                
+                setTimeout(() => {
+                    envelopeSection.classList.add('hidden');
+                    passwordSection.classList.remove('hidden');
+                    
+                    // Smooth Fade In Password Modal
+                    setTimeout(() => {
+                        passwordSection.classList.remove('opacity-0', 'scale-90');
+                        passwordInput.focus();
+                    }, 50);
+                }, 500);
+            }, 1000);
+        }
+
+        // Step 2: Check Password
+        function checkPassword(event) {
+            event.preventDefault();
+            const inputVal = passwordInput.value.trim();
+
+            if (inputVal === 'خوله') {
+                // Correct Password
+                errorMessage.classList.add('hidden');
+                
+                // Hide Password Modal
+                passwordSection.classList.add('opacity-0', 'scale-90');
+                
+                setTimeout(() => {
+                    passwordSection.classList.add('hidden');
+                    revealSection.classList.remove('hidden');
+                    
+                    // Smooth Fade In Reveal Section
+                    setTimeout(() => {
+                        revealSection.classList.remove('opacity-0', 'scale-90');
+                        startHeartsAnimation(); // Start falling hearts!
+                    }, 50);
+                }, 500);
+
+            } else {
+                // Wrong Password
+                errorMessage.classList.remove('hidden');
+                passwordSection.classList.add('shake-modal');
+                
+                setTimeout(() => {
+                    passwordSection.classList.remove('shake-modal');
+                }, 400);
+            }
+        }
+
+        // Step 3: Falling Hearts Animation (Canvas-based for optimal performance)
+        const canvas = document.getElementById('heartsCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let hearts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Heart {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20 - Math.random() * 100;
+                this.size = Math.random() * 18 + 12; // Heart size
+                this.speed = Math.random() * 2 + 1.5; // Falling speed
+                this.opacity = Math.random() * 0.7 + 0.3;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.03;
+                this.color = this.getRandomColor();
+                this.swing = Math.random() * 2; // Horizontal sway
+                this.swingAngle = Math.random() * Math.PI * 2;
+            }
+
+            getRandomColor() {
+                const colors = [
+                    '#e91e63', '#ec407a', '#f48fb1', 
+                    '#ff4081', '#ff80ab', '#d81b60', '#c2185b'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.y += this.speed;
+                this.swingAngle += 0.02;
+                this.x += Math.sin(this.swingAngle) * this.swing;
+                this.rotation += this.rotationSpeed;
+
+                if (this.y > canvas.height + 30) {
+                    this.reset();
                 }
-            };
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                // Draw Heart Path
+                ctx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                ctx.moveTo(0, topCurveHeight);
+                ctx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size);
+                ctx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        function startHeartsAnimation() {
+            // Create 50 heart particles
+            hearts = [];
+            for (let i = 0; i < 50; i++) {
+                hearts.push(new Heart());
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                hearts.forEach(heart => {
+                    heart.update();
+                    heart.draw();
+                });
+                animationFrameId = requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // Reset application to initial state
+        function resetApp() {
+            cancelAnimationFrame(animationFrameId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            isEnvelopeOpen = false;
+            passwordInput.value = '';
+            errorMessage.classList.add('hidden');
+
+            revealSection.classList.add('opacity-0', 'scale-90');
+            setTimeout(() => {
+                revealSection.classList.add('hidden');
+                envelope.classList.remove('open');
+                envelopeSection.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    envelopeSection.classList.remove('opacity-0', 'scale-90');
+                }, 50);
+            }, 500);
         }
     </script>
 </body>
